@@ -11,21 +11,21 @@ namespace CosmosDbBenchmark.Models
 
         public Blog(string type, BlogType blogType) : base(type)
         {
-            this.blogType = blogType;
+            this.BlogType = blogType;
         }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string title { get; set; }
+        public string Title { get; set; }
 
-        public string content { get; set; }
+        public string Content { get; set; }
 
-        public DateTime createdOn { get; set; }
+        public DateTime CreatedOn { get; set; }
         
-        public List<Comment> comments { get; set; }
+        public List<Comment> Comments { get; set; }
 
-        public BlogType blogType { get; set; }
+        public BlogType BlogType { get; set; }
 
-        public override string entityName => (this.blogType == BlogType.Embedded ? "Embedded " : string.Empty) + "Blog";
+        public override string EntityName => (this.BlogType == BlogType.Embedded ? "Embedded " : string.Empty) + "Blog";
     }
 }

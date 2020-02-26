@@ -8,14 +8,14 @@ namespace CosmosDbBenchmark.Models
         {
         }
 
-        public string blogId { get; set; }
+        public string BlogId { get; set; }
 
-        public string commentText { get; set; }
+        public string CommentText { get; set; }
 
-        public string authorName { get; set; }
+        public string AuthorName { get; set; }
 
-        public DateTime commentedOn { get; set; }
+        public DateTime CommentedOn { get; set; }
 
-        public override string entityName => "Comment";
+        public override string EntityName => "Comment";
     }
 }

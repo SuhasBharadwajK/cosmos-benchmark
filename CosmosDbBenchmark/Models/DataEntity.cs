@@ -1,16 +1,20 @@
+using Newtonsoft.Json;
+
 namespace CosmosDbBenchmark.Models
 {
     public abstract class DataEntity
     {
         public DataEntity(string type)
         {
-            this.type = type;
+            this.Type = type;
         }
 
-        public string id { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
-        public string type { get; set; }
+        [JsonProperty("type")]
+        public string Type { get; set; }
 
-        public abstract string entityName { get; }
+        public abstract string EntityName { get; }
     }
 }
