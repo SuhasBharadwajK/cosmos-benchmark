@@ -10,6 +10,8 @@ namespace CosmosDbBenchmark.Models
 
         public string BlogText { get; set; }
 
+        public BlogType BlogType { get; set; }
+
         public List<string> Comments { get; set; }
     }
 }
