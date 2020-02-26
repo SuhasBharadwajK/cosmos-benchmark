@@ -18,7 +18,7 @@ namespace CosmosDbBenchmark
 
         public async Task<CosmosResponse<ReferentialBlog>> GetBlog(string blogId)
         {
-           return await referentialBlogRepository.GetDocumentByIdAsync(blogId,Constants.BlogTypeKey);
+            return await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
         }
 
         public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogs()
@@ -29,7 +29,7 @@ namespace CosmosDbBenchmark
         public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogsWithAllComments()
         {
             List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
-            foreach(var blog in blogs)
+            foreach (var blog in blogs)
             {
                 List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
                 foreach (var comment in comments)
@@ -44,7 +44,7 @@ namespace CosmosDbBenchmark
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
             List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-            foreach(var comment in comments)
+            foreach (var comment in comments)
             {
                 blog.RequestCharge += comment.RequestCharge;
             }
@@ -56,8 +56,8 @@ namespace CosmosDbBenchmark
             List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
             foreach (var blog in blogs)
             {
-                List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP "+numberOfCommentsRequired+" * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-                foreach(var comment in comments)
+                List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                foreach (var comment in comments)
                 {
                     blog.RequestCharge += comment.RequestCharge;
                 }
@@ -65,11 +65,11 @@ namespace CosmosDbBenchmark
             return blogs;
         }
 
-        public async Task<CosmosResponse<ReferentialBlog>> GetOneBlogWithSomeComments(string blogId,int numberOfCommentsRequired)
+        public async Task<CosmosResponse<ReferentialBlog>> GetOneBlogWithSomeComments(string blogId, int numberOfCommentsRequired)
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
-            List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT "+numberOfCommentsRequired+"* FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-            foreach(var comment in comments)
+            List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+            foreach (var comment in comments)
             {
                 blog.RequestCharge += comment.RequestCharge;
             }
@@ -78,13 +78,14 @@ namespace CosmosDbBenchmark
 
         public async Task<CosmosResponse<ReferentialBlog>> CreateBlog(Blog blog)
         {
-            var referentialBlog = (ReferentialBlog) blog;
+            var referentialBlog = (ReferentialBlog)blog;
             CosmosResponse<ReferentialBlog> result = await referentialBlogRepository.AddAsync(referentialBlog);
 
             // Add comments from the blog object
-            foreach(var comment in result.Item.BlogComments)
+            foreach (var comment in result.Item.BlogComments)
             {
-                CosmosResponse<ReferentialComment> response  = await referentialCommentRepository.AddAsync(new ReferentialComment { 
+                CosmosResponse<ReferentialComment> response = await referentialCommentRepository.AddAsync(new ReferentialComment
+                {
                     CommentedOn = comment.CommentedOn,
                     AuthorName = comment.AuthorName,
                     CommentText = comment.CommentText,
@@ -104,7 +105,7 @@ namespace CosmosDbBenchmark
         public async Task<CosmosResponse<ReferentialComment>> AddComment(string blogId, ReferentialComment comment)
         {
             comment.BlogId = blogId;
-            CosmosResponse<ReferentialComment> commentResponse =  await referentialCommentRepository.AddAsync(comment);
+            CosmosResponse<ReferentialComment> commentResponse = await referentialCommentRepository.AddAsync(comment);
             return commentResponse;
         }
 

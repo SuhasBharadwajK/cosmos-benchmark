@@ -34,12 +34,12 @@ namespace CosmosDbBenchmark
            return await blogsRepository.GetDocumentByIdAsync(blogId, Constants.EmbeddedBlogTypeKey);
         }
 
-        public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithSomeComments(string blogId)
+        public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithSomeComments()
         {
             return await blogsRepository.QueryItemsAsync("select * from c");
         }
 
-        public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(string blogId,int numberOfCommentsRequired)
+        public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(string blogId)
         {
             return await blogsRepository.GetDocumentByIdAsync(blogId, Constants.EmbeddedBlogTypeKey);
         }
@@ -51,7 +51,7 @@ namespace CosmosDbBenchmark
 
         public async Task<CosmosResponse<EmbeddedBlog>> UpdateBlog(EmbeddedBlog blog)
         {
-            return await blogsRepository.AddOrUpdateAsync(blog,Constants.EmbeddedBlogTypeKey);
+            return await blogsRepository.AddOrUpdateAsync(blog, Constants.EmbeddedBlogTypeKey);
         }
 
         public async Task<CosmosResponse<EmbeddedBlog>> AddComment(string blogId,Comment comment)
