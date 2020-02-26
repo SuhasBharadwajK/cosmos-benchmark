@@ -8,60 +8,57 @@ namespace CosmosDbBenchmark
     {
         private CosmosDbRepository<EmbeddedBlog> blogsRepository;
 
-        private CosmosDbRepository<ReferentialComment> commentsRepository;
-
         public EmbeddedOperations()
         {
             this.blogsRepository = new CosmosDbRepository<EmbeddedBlog>();
-            this.commentsRepository = new CosmosDbRepository<ReferentialComment>();
         }
 
-        public CosmosResponse<Blog> GetBlog(string blogId)
+        public CosmosResponse<EmbeddedBlog> GetBlog(string blogId)
         {
             throw new NotImplementedException();
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogs()
+        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogs()
         {
             throw new NotImplementedException();
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogsWithAllComments()
+        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogsWithAllComments()
         {
             throw new NotImplementedException();
         }
 
-        public List<CosmosResponse<Blog>> GetOneBlogWithAllComments()
+        public List<CosmosResponse<EmbeddedBlog>> GetOneBlogWithAllComments()
         {
             throw new NotImplementedException();
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
+        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
         {
             throw new NotImplementedException();
         }
 
-        public List<CosmosResponse<Blog>> GetOneBlogWithSomeComments(int numberOfCommentsRequired)
+        public List<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(int numberOfCommentsRequired)
         {
             throw new NotImplementedException();
         }
 
-        public CosmosResponse<Blog> CreateBlog(Blog blog)
+        public CosmosResponse<EmbeddedBlog> CreateBlog(Blog blog)
         {
             throw new NotImplementedException();
         }
 
-        public CosmosResponse<Blog> UpdateBlog(Blog blob)
+        public CosmosResponse<EmbeddedBlog> UpdateBlog(Blog blob)
         {
             throw new NotImplementedException();
         }
 
-        CosmosResponse<Blog> AddComment(Comment comment)
+        CosmosResponse<EmbeddedBlog> AddComment(Comment comment)
         {
             throw new NotImplementedException();
         }
 
-        CosmosResponse<Blog> UpdateComment(Comment comment)
+        CosmosResponse<EmbeddedBlog> UpdateComment(Comment comment)
         {
             throw new NotImplementedException();
         }
