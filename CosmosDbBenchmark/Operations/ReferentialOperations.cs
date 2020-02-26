@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CosmosDbBenchmark.Models;
 
 namespace CosmosDbBenchmark
@@ -7,60 +8,103 @@ namespace CosmosDbBenchmark
     public class ReferentialOperations
     {
         private CosmosDbRepository<Blog> referentialBlogRepository;
+        private CosmosDbRepository<ReferentialComment> referentialCommentRepository;
 
         public ReferentialOperations()
         {
             this.referentialBlogRepository = new CosmosDbRepository<Blog>();
+            this.referentialCommentRepository = new CosmosDbRepository<ReferentialComment>();
         }
 
-        public CosmosResponse<Blog> GetBlog(string blogId)
+        public async Task<CosmosResponse<Blog>> GetBlog(string blogId)
         {
-            throw new NotImplementedException();
+           return await referentialBlogRepository.GetDocumentByIdAsync(blogId,Constants.BlogTypeKey);
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogs()
+        public async Task<List<CosmosResponse<Blog>>> GetAllBlogs()
         {
-            throw new NotImplementedException();
+            return await referentialBlogRepository.QueryItemsAsync("select * from c");
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogsWithAllComments()
+        public async Task<List<CosmosResponse<Blog>>> GetAllBlogsWithAllComments()
         {
-            throw new NotImplementedException();
+            List<CosmosResponse<Blog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
+            foreach(var blog in blogs)
+            {
+                List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                foreach (var comment in comments)
+                {
+                    blog.RequestCharge += comment.RequestCharge;
+                }
+            }
+            return blogs;
         }
 
-        public List<CosmosResponse<Blog>> GetOneBlogWithAllComments()
+        public async Task<CosmosResponse<Blog>> GetOneBlogWithAllComments(string blogId)
         {
-            throw new NotImplementedException();
+            CosmosResponse<Blog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
+            List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+            foreach(var comment in comments)
+            {
+                blog.RequestCharge += comment.RequestCharge;
+            }
+            return blog;
         }
 
-        public List<CosmosResponse<Blog>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
+        public async Task<List<CosmosResponse<Blog>>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
         {
-            throw new NotImplementedException();
+            List<CosmosResponse<Blog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
+            foreach (var blog in blogs)
+            {
+                List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP "+numberOfCommentsRequired+" * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                foreach(var comment in comments)
+                {
+                    blog.RequestCharge += comment.RequestCharge;
+                }
+            }
+            return blogs;
         }
 
-        public List<CosmosResponse<Blog>> GetOneBlogWithSomeComments(int numberOfCommentsRequired)
+        public async Task<CosmosResponse<Blog>> GetOneBlogWithSomeComments(string blogId,int numberOfCommentsRequired)
         {
-            throw new NotImplementedException();
+            CosmosResponse<Blog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
+            List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT "+numberOfCommentsRequired+"* FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+            foreach(var comment in comments)
+            {
+                blog.RequestCharge += comment.RequestCharge;
+            }
+            return blog;
         }
 
-        public CosmosResponse<Blog> CreateBlog(Blog blog)
+        public async Task<CosmosResponse<Blog>> CreateBlog(Blog blog)
         {
-            throw new NotImplementedException();
+            return await referentialBlogRepository.AddAsync(blog);
         }
 
-        public CosmosResponse<Blog> UpdateBlog(Blog blob)
+        public async Task<CosmosResponse<Blog>> UpdateBlog(Blog blog)
         {
-            throw new NotImplementedException();
+            return await referentialBlogRepository.AddOrUpdateAsync(blog,Constants.BlogTypeKey);
         }
 
-        CosmosResponse<ReferentialComment> AddComment(ReferentialComment comment)
+        public async Task<CosmosResponse<ReferentialComment>> AddComment(string blogId,ReferentialComment comment)
         {
-            throw new NotImplementedException();
+            comment.BlogId = blogId;
+            CosmosResponse<ReferentialComment> commentResponse =  await referentialCommentRepository.AddAsync(comment);
+            CosmosResponse<Blog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
+            blog.Item.Comments.Add(new Comment
+            {
+                AuthorName = comment.AuthorName,
+                CommentedOn = comment.CommentedOn,
+                CommentText = comment.CommentText
+            });
+            CosmosResponse<Blog> blogUpdateResponse = await referentialBlogRepository.AddOrUpdateAsync(blog.Item,Constants.BlogTypeKey);
+            commentResponse.RequestCharge += blog.RequestCharge + blogUpdateResponse.RequestCharge;
+            return commentResponse;
         }
 
-        CosmosResponse<ReferentialComment> UpdateComment(ReferentialComment comment)
+        public async Task<CosmosResponse<ReferentialComment>> UpdateComment(ReferentialComment comment)
         {
-            throw new NotImplementedException();
+            return await referentialCommentRepository.AddOrUpdateAsync(comment, Constants.CommentTypeKey);
         }
     }
 }

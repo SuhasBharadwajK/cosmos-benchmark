@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CosmosDbBenchmark.Models;
 
 namespace CosmosDbBenchmark
@@ -13,54 +14,62 @@ namespace CosmosDbBenchmark
             this.blogsRepository = new CosmosDbRepository<EmbeddedBlog>();
         }
 
-        public CosmosResponse<EmbeddedBlog> GetBlog(string blogId)
+        public async Task<CosmosResponse<EmbeddedBlog>> GetBlog(string blogId)
         {
-            throw new NotImplementedException();
+            return await blogsRepository.GetDocumentByIdAsync(blogId,Constants.EmbeddedBlogTypeKey);
         }
 
-        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogs()
+        public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogs()
         {
-            throw new NotImplementedException();
+            return await blogsRepository.QueryItemsAsync("select * from c");
         }
 
-        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogsWithAllComments()
+        public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithAllComments()
         {
-            throw new NotImplementedException();
+            return await blogsRepository.QueryItemsAsync("select * from c");
         }
 
-        public List<CosmosResponse<EmbeddedBlog>> GetOneBlogWithAllComments()
+        public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithAllComments(string blogId)
         {
-            throw new NotImplementedException();
+           return await blogsRepository.GetDocumentByIdAsync(blogId, Constants.EmbeddedBlogTypeKey);
         }
 
-        public List<CosmosResponse<EmbeddedBlog>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
+        public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithSomeComments(string blogId)
         {
-            throw new NotImplementedException();
+            return await blogsRepository.QueryItemsAsync("select * from c");
         }
 
-        public List<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(int numberOfCommentsRequired)
+        public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(string blogId,int numberOfCommentsRequired)
         {
-            throw new NotImplementedException();
+            return await blogsRepository.GetDocumentByIdAsync(blogId, Constants.EmbeddedBlogTypeKey);
         }
 
-        public CosmosResponse<EmbeddedBlog> CreateBlog(Blog blog)
+        public async Task<CosmosResponse<EmbeddedBlog>> CreateBlog(EmbeddedBlog blog)
         {
-            throw new NotImplementedException();
+            return await blogsRepository.AddAsync(blog);
         }
 
-        public CosmosResponse<EmbeddedBlog> UpdateBlog(Blog blob)
+        public async Task<CosmosResponse<EmbeddedBlog>> UpdateBlog(EmbeddedBlog blog)
         {
-            throw new NotImplementedException();
+            return await blogsRepository.AddOrUpdateAsync(blog,Constants.EmbeddedBlogTypeKey);
         }
 
-        CosmosResponse<EmbeddedBlog> AddComment(Comment comment)
+        public async Task<CosmosResponse<EmbeddedBlog>> AddComment(string blogId,Comment comment)
         {
-            throw new NotImplementedException();
+            CosmosResponse<EmbeddedBlog> blog = await blogsRepository.GetDocumentByIdAsync(blogId,Constants.EmbeddedBlogTypeKey);
+            blog.Item.Comments.Add(comment);
+            CosmosResponse<EmbeddedBlog> updatedBlog = await blogsRepository.AddOrUpdateAsync(blog.Item,Constants.EmbeddedBlogTypeKey);
+            updatedBlog.RequestCharge += blog.RequestCharge;
+            return updatedBlog;
         }
 
-        CosmosResponse<EmbeddedBlog> UpdateComment(Comment comment)
+        public async Task<CosmosResponse<EmbeddedBlog>> UpdateComment(string blogId,Comment comment)
         {
-            throw new NotImplementedException();
+            CosmosResponse<EmbeddedBlog> blog = await blogsRepository.GetDocumentByIdAsync(blogId, Constants.EmbeddedBlogTypeKey);
+            blog.Item.Comments.Add(comment);
+            CosmosResponse<EmbeddedBlog> updatedBlog = await blogsRepository.AddOrUpdateAsync(blog.Item, Constants.EmbeddedBlogTypeKey);
+            updatedBlog.RequestCharge += blog.RequestCharge;
+            return updatedBlog;
         }
     }
 }
