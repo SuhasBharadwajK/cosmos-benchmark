@@ -11,7 +11,7 @@ namespace CosmosDbBenchmark.Models
 
     public enum BlogType
     {
-        Default,
+        Referential,
         Embedded
     }
 }

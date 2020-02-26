@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CosmosDbBenchmark.Models
 {
@@ -22,9 +23,10 @@ namespace CosmosDbBenchmark.Models
 
         public DateTime CreatedOn { get; set; }
         
-        public List<Comment> Comments { get; set; }
-
         public BlogType BlogType { get; set; }
+
+        [JsonIgnore]
+        public List<Comment> BlogComments { get; set; }
 
         public override string EntityName => (this.BlogType == BlogType.Embedded ? "Embedded " : string.Empty) + "Blog";
     }
