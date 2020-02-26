@@ -1,4 +1,5 @@
 using CosmosDbBenchmark.Models;
+using System;
 using System.Collections.Generic;
 
 namespace CosmosDbBenchmark.Generations
@@ -43,24 +44,28 @@ namespace CosmosDbBenchmark.Generations
             var blogSize = initialBlogSizeInKilobytes;
             var commentSize = initialCommentSizeInBytes;
 
-            for (int i = 1; i <= numberOfMultiplications; i++)
+            foreach (var enumValue in Enum.GetValues(typeof(BlogType)))
             {
-                for (int j = 0; j < blogCount; j++)
+                for (int i = 1; i <= numberOfMultiplications; i++)
                 {
-                    var blogText = TextHelper.GetBytesOfString(blogSize, 1000);
-                    var comments = TextHelper.GetStringsOfLength(commentsPerBlog, commentSize);
-
-                    result.Add(new BlogGenerationResult
+                    for (int j = 0; j < blogCount; j++)
                     {
-                        BlogSizeInKilobytes = blogSize,
-                        CommentSizeInBytes = commentSize,
-                        BlogText = blogText,
-                        Comments = comments
-                    });
-                }
+                        var blogText = TextHelper.GetBytesOfString(blogSize, 1000);
+                        var comments = TextHelper.GetStringsOfLength(commentsPerBlog, commentSize);
 
-                blogSize *= blogSizeMultiplier;
-                commentSize *= commentSizeMultiplier;
+                        result.Add(new BlogGenerationResult
+                        {
+                            BlogSizeInKilobytes = blogSize,
+                            CommentSizeInBytes = commentSize,
+                            BlogText = blogText,
+                            Comments = comments,
+                            BlogType = (BlogType) enumValue
+                        });
+                    }
+
+                    blogSize *= blogSizeMultiplier;
+                    commentSize *= commentSizeMultiplier;
+                }
             }
 
             return result;

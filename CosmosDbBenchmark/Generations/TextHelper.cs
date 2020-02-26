@@ -2849,5 +2849,67 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pharetra vari
 
             return result;
         }
+
+        public static string GetRandomName()
+        {
+            var randomNames = new List<string>
+            {
+                "Al Deal",
+                "Fannie Rippey",
+                "Tiffani Polhemus",
+                "Colette Stoker",
+                "Freddy Fuquay",
+                "Judi Northrup",
+                "Cassey Dittman",
+                "Elyse Hartnett",
+                "Veronika House",
+                "Velvet Carrales",
+                "Carline Gaunce",
+                "Jenni Twombly",
+                "Porsche Chrzanowski",
+                "Kiara Knuckles",
+                "Ollie Berber",
+                "Lamonica Etherton",
+                "Torrie Quaid",
+                "Ingrid Luedtke",
+                "Sharee Whitmire",
+                "Ka Bogart",
+                "Ara Dufner",
+                "Reina Goings",
+                "Carlie Leduc",
+                "Bulah Alexandria",
+                "Dodie Shadley",
+                "Maricela Matranga",
+                "Beau Ettinger",
+                "Adaline Satterwhite",
+                "Joan Mcintyre",
+                "Jonelle Worm",
+                "Wayne Crone",
+                "Melani Ciotti",
+                "Moon Chadd",
+                "Tamekia Serrato",
+                "Iola Kofoed",
+                "Lynsey Tankersley",
+                "Elliot Reighard",
+                "Lorna Reuss",
+                "Aleshia Camper",
+                "Elvia Ono",
+                "Machelle Kosak",
+                "Clemencia Student",
+                "Dolores Groom",
+                "Adelina Acedo",
+                "Bunny Wilborn",
+                "Serafina Dingle",
+                "Kristina Harter",
+                "Odessa Knaack",
+                "Evelyne Brain",
+                "Star Uhl",
+            };
+
+            Random random = new Random();
+            int randomIndex = random.Next(0, randomNames.Count);
+
+            return randomNames[randomIndex];
+        }
     }
 }
