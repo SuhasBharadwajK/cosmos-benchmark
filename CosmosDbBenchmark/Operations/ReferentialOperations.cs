@@ -79,11 +79,21 @@ namespace CosmosDbBenchmark
         public async Task<CosmosResponse<ReferentialBlog>> CreateBlog(Blog blog)
         {
             var referentialBlog = (ReferentialBlog) blog;
-            var result = await referentialBlogRepository.AddAsync(referentialBlog);
+            CosmosResponse<ReferentialBlog> result = await referentialBlogRepository.AddAsync(referentialBlog);
 
             // Add comments from the blog object
+            foreach(var comment in result.Item.BlogComments)
+            {
+                CosmosResponse<ReferentialComment> response  = await referentialCommentRepository.AddAsync(new ReferentialComment { 
+                    CommentedOn = comment.CommentedOn,
+                    AuthorName = comment.AuthorName,
+                    CommentText = comment.CommentText,
+                    BlogId = referentialBlog.Id
+                });
+                result.RequestCharge += response.RequestCharge;
+            }
 
-            return null;
+            return result;
         }
 
         public async Task<CosmosResponse<ReferentialBlog>> UpdateBlog(Blog blog)
