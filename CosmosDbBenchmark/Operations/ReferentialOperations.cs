@@ -89,7 +89,8 @@ namespace CosmosDbBenchmark
                     CommentedOn = comment.CommentedOn,
                     AuthorName = comment.AuthorName,
                     CommentText = comment.CommentText,
-                    BlogId = referentialBlog.Id
+                    BlogId = referentialBlog.Id,
+                    Id = Guid.NewGuid().ToString(),
                 });
                 result.RequestCharge += response.RequestCharge;
             }
