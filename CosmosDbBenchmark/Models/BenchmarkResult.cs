@@ -8,6 +8,8 @@ namespace CosmosDbBenchmark.Models
         {
         }
 
+        public List<BenchmarkResult> ChildBenchmarkResults { get; set; }
+
         public BlogGenerationResult BlogGenerationResult { get; set; }
 
         public CommentGenerationResult CommentGenerationResult { get; set; }

@@ -65,7 +65,7 @@ namespace CosmosDbBenchmark
             return blogs;
         }
 
-        public async Task<CosmosResponse<ReferentialBlog>> GetOneBlogWithSomeComments(string blogId, int numberOfCommentsRequired)
+        public async Task<Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>> GetOneBlogWithSomeComments(string blogId, int numberOfCommentsRequired)
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
             List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
@@ -73,7 +73,8 @@ namespace CosmosDbBenchmark
             {
                 blog.RequestCharge += comment.RequestCharge;
             }
-            return blog;
+
+            return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blog, comments);
         }
 
         public async Task<CosmosResponse<ReferentialBlog>> CreateBlog(Blog blog)

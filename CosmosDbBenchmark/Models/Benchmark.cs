@@ -13,5 +13,10 @@ namespace CosmosDbBenchmark.Models
         public List<BenchmarkResult> BenchmarkResults { get; set; }
 
         public BenchmarkType BenchmarkType { get; set; }
+
+        public void AddResult(BenchmarkResult benchmarkResult)
+        {
+            this.BenchmarkResults.Add(benchmarkResult);
+        }
     }
 }
