@@ -41,11 +41,12 @@ namespace CosmosDbBenchmark.Generations
         public List<BlogGenerationResult> GenerateBlogsWithComments()
         {
             var result = new List<BlogGenerationResult>();
-            var blogSize = initialBlogSizeInKilobytes;
-            var commentSize = initialCommentSizeInBytes;
 
             foreach (var enumValue in Enum.GetValues(typeof(BlogType)))
             {
+                var blogSize = initialBlogSizeInKilobytes;
+                var commentSize = initialCommentSizeInBytes;
+
                 for (int i = 1; i <= numberOfMultiplications; i++)
                 {
                     for (int j = 0; j < blogCount; j++)

@@ -53,8 +53,8 @@ namespace CosmosDbBenchmark
                     Id = Guid.NewGuid().ToString(),
                     BlogType = result.BlogType,
                     Content = result.BlogText,
-                    Title = Constants.BlogTitlePrefix + " " + blogCount,
-                    Name = Constants.BlogNamePrefix + " " + blogCount,
+                    Title = Constants.BlogTitlePrefix + " " + blogCount % 2,
+                    Name = Constants.BlogNamePrefix + " " + blogCount % 2,
                     CreatedOn = DateTime.UtcNow,
                     BlogComments = result.Comments.Select(generatedComment => new Comment {
                         AuthorName = TextHelper.GetRandomName(),
