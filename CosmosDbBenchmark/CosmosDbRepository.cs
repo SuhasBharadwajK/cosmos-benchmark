@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CosmosDbBenchmark.Models;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
 
 namespace CosmosDbBenchmark
 {
@@ -18,7 +17,7 @@ namespace CosmosDbBenchmark
         public async Task<CosmosResponse<T>> AddAsync(T item)
         {
             ItemResponse<T> itemResponse = await this._container.CreateItemAsync(item);
-            T createdEntity = JsonConvert.DeserializeObject<T>(itemResponse.Resource.ToString());
+            T createdEntity = itemResponse.Resource;
             return new CosmosResponse<T>(createdEntity, itemResponse.RequestCharge, ComsosDbOperation.Create);
         }
 
@@ -31,7 +30,7 @@ namespace CosmosDbBenchmark
         public async Task<CosmosResponse<T>> AddOrUpdateAsync(T item, string key)
         {
             ItemResponse<T> itemResponse = await this._container.UpsertItemAsync<T>(item, new PartitionKey(key));
-            T updatedEntity = JsonConvert.DeserializeObject<T>(itemResponse.Resource.ToString());
+            T updatedEntity = itemResponse.Resource;
             return new CosmosResponse<T>(updatedEntity, itemResponse.RequestCharge, ComsosDbOperation.Update);
         }
 
