@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CosmosDbBenchmark.Models
+﻿namespace CosmosDbBenchmark.Models
 {
     public class ReferentialBlog : Blog
     {
