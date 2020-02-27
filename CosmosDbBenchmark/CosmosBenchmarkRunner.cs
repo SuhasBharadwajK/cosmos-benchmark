@@ -36,9 +36,9 @@ namespace CosmosDbBenchmark
         }
 
         // Create n blogs with m comments each.
-        public List<BenchmarkResult> BenchmarkCreatingBlogs()
+        public Benchmark BenchmarkCreatingBlogs()
         {
-            var benchmarkResults = new List<BenchmarkResult>();
+            var benchmark = new Benchmark(BenchmarkType.CreateAllBlogs);
             var blogGenerationResults = this._blogGenerator.GenerateBlogsWithComments();
 
             var blogCount = 1;
@@ -49,6 +49,7 @@ namespace CosmosDbBenchmark
 
                 var newBlog = new Blog
                 {
+                    Id = Guid.NewGuid().ToString(),
                     BlogType = result.BlogType,
                     Content = result.BlogText,
                     Title = Constants.BlogTitlePrefix + " " + blogCount,
@@ -70,74 +71,74 @@ namespace CosmosDbBenchmark
                     benchmarkResult.ReferentialBlogResponse = await this._referentialOperations.CreateBlog(newBlog);
                 }
 
-                benchmarkResults.Add(benchmarkResult);
+                benchmark.BenchmarkResults.Add(benchmarkResult);
 
                 blogCount++;
             });
 
-            return benchmarkResults;
+            return benchmark;
         }
 
         // Update n blogs
-        public List<BenchmarkResult> BenchmarkUpdatingBlogs()
+        public Benchmark BenchmarkUpdatingBlogs()
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
-
+            var benchmark = new Benchmark(BenchmarkType.UpdateAllBlogs);
             // TODO.
+            var blogGenerationResults = this._blogGenerator.GenerateBlogsWithComments();
+            // Get all blogs and record benchmarks
 
-            return benchmarkResults;
+            // Update all blogs and record benchmarks
+
+            return benchmark;
         }
 
         // Update n comments
-        public List<BenchmarkResult> BenchmarkUpdatingComments(string blogId, int commentsCount)
+        public Benchmark BenchmarkUpdatingComments(string blogId, int commentsCount)
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
-
             // TODO.
-
-            return benchmarkResults;
+            var benchmark = new Benchmark(BenchmarkType.UpdateAllCommentsInABlog);
+            return benchmark;
         }
 
         // Get all blogs
-        public List<BenchmarkResult> BenchmarkGettingAllBlogs()
+        public Benchmark BenchmarkGettingAllBlogs()
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
-
             // TODO.
-
-            return  benchmarkResults;
+            var benchmark = new Benchmark(BenchmarkType.GetAllBlogs);
+            return benchmark;
         }
 
         // Get all blogs with all comments
-        public List<BenchmarkResult> BenchmarkGettingAllBlogsWithAllComments()
+        public Benchmark BenchmarkGettingAllBlogsWithAllComments()
         {
             // TODO.
-            var benchmarkResults = new List<BenchmarkResult> { };
-            return  benchmarkResults;
+            // Both referential and embedded including comments.
+            var benchmark = new Benchmark(BenchmarkType.GetAllBlogsWithAllComments);
+            return benchmark;
         }
 
         // Get one blog
-        public List<BenchmarkResult> BenchmarkGettingBlog(string blogId)
+        public Benchmark BenchmarkGettingBlog(string blogId)
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
+            var benchmark = new Benchmark(BenchmarkType.GetOneBlog);
             // TODO.
-            return  benchmarkResults;
+            return benchmark;
         }
 
         // Get one blogs with all comments
-        public List<BenchmarkResult> BenchmarkGettingBlogWithAllComments(string blogId)
+        public Benchmark BenchmarkGettingBlogWithAllComments(string blogId)
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
+            var benchmark = new Benchmark(BenchmarkType.GetOneBlogWithAllComments);
             // TODO.
-            return  benchmarkResults;
+            return benchmark;
         }
 
         // Get one blogs with n comments
-        public List<BenchmarkResult> BenchmarkGettingBlogWithSomeComments(string blogId, int numberOfComments)
+        public Benchmark BenchmarkGettingBlogWithSomeComments(string blogId, int numberOfComments)
         {
-            var benchmarkResults = new List<BenchmarkResult> { };
+            var benchmark = new Benchmark(BenchmarkType.GetOneBlogWithSomeComments);
             // TODO.
-            return  benchmarkResults;
+            return  benchmark;
         }
     }
 }

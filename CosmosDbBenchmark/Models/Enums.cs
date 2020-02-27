@@ -14,4 +14,16 @@ namespace CosmosDbBenchmark.Models
         Referential,
         Embedded
     }
+
+    public enum BenchmarkType
+    {
+        CreateAllBlogs,
+        UpdateAllBlogs,
+        UpdateAllCommentsInABlog,
+        GetAllBlogs,
+        GetAllBlogsWithAllComments,
+        GetOneBlog,
+        GetOneBlogWithAllComments,
+        GetOneBlogWithSomeComments
+    }
 }

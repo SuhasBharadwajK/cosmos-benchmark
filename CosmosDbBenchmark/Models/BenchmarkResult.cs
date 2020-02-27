@@ -10,6 +10,8 @@ namespace CosmosDbBenchmark.Models
 
         public BlogGenerationResult BlogGenerationResult { get; set; }
 
+        public CommentGenerationResult CommentGenerationResult { get; set; }
+
         public CosmosResponse<EmbeddedBlog> EmbeddedBlogResponse { get; set; }
 
         public CosmosResponse<ReferentialBlog> ReferentialBlogResponse { get; set; }

@@ -70,5 +70,20 @@ namespace CosmosDbBenchmark.Generations
 
             return result;
         }
+
+        public List<CommentGenerationResult> GenrateBlogComments(int numberOfComments, int commentLength)
+        {
+            var results = new List<CommentGenerationResult>();
+            for (int c = 0; c < numberOfComments; c++)
+            {
+                results.Add(new CommentGenerationResult
+                {
+                    CommentText = TextHelper.GetBytesOfString(commentLength),
+                    CommentSizeInBytes = commentLength
+                });
+            }
+
+            return results;
+        }
     }
 }

@@ -2836,7 +2836,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pharetra vari
 
         public static string GetBytesOfString(int numberOfBytes, int sizeFactor = 1)
         {
-            return OneMBText.Substring(0, sizeFactor * numberOfBytes);
+            return OneMBText.Substring(0, sizeFactor * numberOfBytes).Scramble();
         }
 
         public static List<string> GetStringsOfLength(int numberOfStrings, int numberOfBytes)
