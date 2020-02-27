@@ -56,7 +56,8 @@ namespace CosmosDbBenchmark
                     Title = Constants.BlogTitlePrefix + " " + blogCount % 2,
                     Name = Constants.BlogNamePrefix + " " + blogCount % 2,
                     CreatedOn = DateTime.UtcNow,
-                    BlogComments = result.Comments.Select(generatedComment => new Comment {
+                    BlogComments = result.Comments.Select(generatedComment => new Comment
+                    {
                         AuthorName = TextHelper.GetRandomName(),
                         CommentedOn = DateTime.UtcNow,
                         CommentText = generatedComment
@@ -89,7 +90,7 @@ namespace CosmosDbBenchmark
             // Get all blogs and record benchmarks
             var embeddedBlogs = await this._embeddedOperations.GetAllBlogs();
             int embeddedIndex = 0;
-            foreach(var embeddedBlog in embeddedBlogs)
+            foreach (var embeddedBlog in embeddedBlogs)
             {
                 embeddedBlog.Item.Content = blogGenerationResults[embeddedIndex].BlogText;
                 var benchmarkResult = new BenchmarkResult { BlogGenerationResult = blogGenerationResults[embeddedIndex] };
@@ -112,42 +113,46 @@ namespace CosmosDbBenchmark
         }
 
         // Update n comments
-        public async Task<Benchmark> BenchmarkUpdatingComments(string referenceBlogId,string embeddedBlogId, int commentsCount)
+        public async Task<Benchmark> BenchmarkUpdatingComments(string referenceBlogId, string embeddedBlogId, int commentsCount)
         {
             // TODO.
             var benchmark = new Benchmark(BenchmarkType.UpdateAllCommentsInABlog);
             var embeddedBlog = await this._embeddedOperations.GetBlog(embeddedBlogId);
             benchmark.BenchmarkResults.Add(new BenchmarkResult { EmbeddedBlogResponse = embeddedBlog });
-            var comments = _blogGenerator.GenrateBlogComments(commentsCount,embeddedBlog.Item.Comments[0].CommentText.Length);
-            int embeddedIndex = 0;
-            foreach (var comment in embeddedBlog.Item.BlogComments)
+            var comments = _blogGenerator.GenrateBlogComments(commentsCount, embeddedBlog.Item.Comments[0].CommentText.Length);
+
+            for (int i = 0; i < commentsCount; i++)
             {
-                comment.CommentText = comments[embeddedIndex].CommentText;
-                comment.CommentedOn = DateTime.UtcNow;
-                embeddedIndex++;
+                embeddedBlog.Item.BlogComments[i].CommentText = comments[i].CommentText;
+                embeddedBlog.Item.BlogComments[i].CommentedOn = DateTime.UtcNow;
             }
+
             var response = await this._embeddedOperations.UpdateBlog(embeddedBlog.Item);
             benchmark.BenchmarkResults.Add(new BenchmarkResult { EmbeddedBlogResponse = response });
 
             var result = await this._referentialOperations.GetOneBlogWithAllComments(referenceBlogId);
             var refernceBlog = result.Item1;
             var referenceComments = result.Item2;
-            benchmark.AddResult(new BenchmarkResult { ReferentialBlogResponse = refernceBlog });
+
+            var referenceBlogBenchmarkResult = new BenchmarkResult { ReferentialBlogResponse = refernceBlog };
+
             var referenceCommentsGenerated = _blogGenerator.GenrateBlogComments(commentsCount, referenceComments[0].Item.CommentText.Length);
-            int referenceIndex = 0;
-            foreach (var comment in referenceComments)
+            
+            for (int i = 0; i < commentsCount; i++)
             {
-                comment.Item.CommentText = referenceCommentsGenerated[referenceIndex].CommentText;
-                comment.Item.CommentedOn = DateTime.UtcNow;
-                var updateResponse = await this._referentialOperations.UpdateComment(comment.Item);
-                benchmark.BenchmarkResults.Add(new BenchmarkResult { ReferentialCommentResponse = updateResponse });
-                referenceIndex++;
+                referenceComments[i].Item.CommentText = referenceCommentsGenerated[i].CommentText;
+                referenceComments[i].Item.CommentedOn = DateTime.UtcNow;
+                var updateResponse = await this._referentialOperations.UpdateComment(referenceComments[i].Item);
+                referenceBlogBenchmarkResult.ChildBenchmarkResults.Add(new BenchmarkResult { ReferentialCommentResponse = updateResponse });
             }
+
+            benchmark.AddResult(referenceBlogBenchmarkResult);
+
             return benchmark;
         }
 
         // Get all blogs
-        public async Task<Benchmark> BenchmarkGettingAllBlogs()
+        public async Task<Benchmark> BenchmarkGettingAllBlogsWithoutComments()
         {
             // TODO.
             var benchmark = new Benchmark(BenchmarkType.GetAllBlogs);
@@ -157,12 +162,14 @@ namespace CosmosDbBenchmark
                 var benchmarkResult = new BenchmarkResult { EmbeddedBlogResponse = blog };
                 benchmark.BenchmarkResults.Add(benchmarkResult);
             }
+
             var referentialBlogs = await this._referentialOperations.GetAllBlogs();
             foreach (var blog in referentialBlogs)
             {
                 var benchmarkResult = new BenchmarkResult { ReferentialBlogResponse = blog };
                 benchmark.BenchmarkResults.Add(benchmarkResult);
             }
+
             return benchmark;
         }
 
@@ -178,24 +185,28 @@ namespace CosmosDbBenchmark
                 var benchmarkResult = new BenchmarkResult { EmbeddedBlogResponse = blog };
                 benchmark.BenchmarkResults.Add(benchmarkResult);
             }
+
             var response = await this._referentialOperations.GetAllBlogsWithAllComments();
             var referentialBlogs = response.Item1;
             var referentialComments = response.Item2;
+
             foreach (var blog in referentialBlogs)
             {
                 var benchmarkResult = new BenchmarkResult { ReferentialBlogResponse = blog };
+
+                foreach (var comment in referentialComments.Where(c => c.Item.BlogId == blog.Item.Id))
+                {
+                    benchmarkResult.ChildBenchmarkResults.Add(new BenchmarkResult { ReferentialCommentResponse = comment });
+                }
+
                 benchmark.BenchmarkResults.Add(benchmarkResult);
             }
-            foreach (var comment in referentialComments)
-            {
-                var benchmarkResult = new BenchmarkResult { ReferentialCommentResponse = comment };
-                benchmark.BenchmarkResults.Add(benchmarkResult);
-            }
+
             return benchmark;
         }
 
         // Get one blog
-        public async Task<Benchmark> BenchmarkGettingBlog(string referenceBlogId,string embeddedBlogId)
+        public async Task<Benchmark> BenchmarkGettingBlog(string referenceBlogId, string embeddedBlogId)
         {
             var benchmark = new Benchmark(BenchmarkType.GetOneBlog);
             var embeddedBlog = await this._embeddedOperations.GetBlog(embeddedBlogId);
@@ -219,6 +230,7 @@ namespace CosmosDbBenchmark
                 ReferentialBlogResponse = referentialBlog,
                 ChildBenchmarkResults = commentResponses.Select(c => new BenchmarkResult { ReferentialCommentResponse = c }).ToList()
             });
+
             return benchmark;
         }
 
@@ -239,7 +251,8 @@ namespace CosmosDbBenchmark
             };
 
             benchmark.AddResult(referentialBlogBenchmarkResult);
-            return  benchmark;
+
+            return benchmark;
         }
     }
 }
