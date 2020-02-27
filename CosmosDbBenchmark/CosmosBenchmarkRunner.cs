@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CosmosDbBenchmark.Generations;
 using CosmosDbBenchmark.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CosmosDbBenchmark
 {
@@ -37,14 +36,14 @@ namespace CosmosDbBenchmark
         }
 
         // Create n blogs with m comments each.
-        public Benchmark BenchmarkCreatingBlogs()
+        public async Task<Benchmark> BenchmarkCreatingBlogs()
         {
             var benchmark = new Benchmark(BenchmarkType.CreateAllBlogs);
             var blogGenerationResults = this._blogGenerator.GenerateBlogsWithComments();
 
             var blogCount = 1;
 
-            blogGenerationResults.ForEach(async result =>
+            foreach (var result in blogGenerationResults)
             {
                 var benchmarkResult = new BenchmarkResult { BlogGenerationResult = result };
 
@@ -66,17 +65,19 @@ namespace CosmosDbBenchmark
 
                 if (result.BlogType == BlogType.Embedded)
                 {
-                    benchmarkResult.EmbeddedBlogResponse = await this._embeddedOperations.CreateBlog((EmbeddedBlog)newBlog);
+                    benchmarkResult.EmbeddedBlogResponse = await this._embeddedOperations.CreateBlog(newBlog.CastTo<EmbeddedBlog>());
                 }
                 else
                 {
-                    benchmarkResult.ReferentialBlogResponse = await this._referentialOperations.CreateBlog(newBlog);
+                    var createBlogResult = await this._referentialOperations.CreateBlog(newBlog.CastTo<ReferentialBlog>());
+                    benchmarkResult.ReferentialBlogResponse = createBlogResult.Item1;
+                    benchmarkResult.ChildBenchmarkResults = createBlogResult.Item2.Select(c => new BenchmarkResult { ReferentialCommentResponse = c }).ToList();
                 }
 
                 benchmark.BenchmarkResults.Add(benchmarkResult);
 
                 blogCount++;
-            });
+            }
 
             return benchmark;
         }
@@ -98,6 +99,7 @@ namespace CosmosDbBenchmark
                 benchmark.BenchmarkResults.Add(benchmarkResult);
                 embeddedIndex++;
             }
+
             int referentialIndex = 0;
             var referentialBlogs = await this._referentialOperations.GetAllBlogs();
             foreach (var blog in referentialBlogs)
@@ -143,7 +145,7 @@ namespace CosmosDbBenchmark
                 referenceComments[i].Item.CommentText = referenceCommentsGenerated[i].CommentText;
                 referenceComments[i].Item.CommentedOn = DateTime.UtcNow;
                 var updateResponse = await this._referentialOperations.UpdateComment(referenceComments[i].Item);
-                referenceBlogBenchmarkResult.ChildBenchmarkResults.Add(new BenchmarkResult { ReferentialCommentResponse = updateResponse });
+                referenceBlogBenchmarkResult.ChildBenchmarkResults.Add(new BenchmarkResult { ReferentialCommentResponse = updateResponse, CommentGenerationResult = referenceCommentsGenerated[i] });
             }
 
             benchmark.AddResult(referenceBlogBenchmarkResult);
