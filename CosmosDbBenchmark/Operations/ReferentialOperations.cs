@@ -26,21 +26,22 @@ namespace CosmosDbBenchmark
             return await referentialBlogRepository.QueryItemsAsync("select * from c");
         }
 
-        public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogsWithAllComments()
+        public async Task<Tuple<List<CosmosResponse<ReferentialBlog>>, List<CosmosResponse<ReferentialComment>>>> GetAllBlogsWithAllComments()
         {
             List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
+            List<CosmosResponse<ReferentialComment>> comments = new List<CosmosResponse<ReferentialComment>>();
             foreach (var blog in blogs)
             {
-                List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
                 foreach (var comment in comments)
                 {
                     blog.RequestCharge += comment.RequestCharge;
                 }
             }
-            return blogs;
+            return new Tuple<List<CosmosResponse<ReferentialBlog>>, List<CosmosResponse<ReferentialComment>>>(blogs,comments);
         }
 
-        public async Task<CosmosResponse<ReferentialBlog>> GetOneBlogWithAllComments(string blogId)
+        public async Task<Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>> GetOneBlogWithAllComments(string blogId)
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
             List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
@@ -48,7 +49,8 @@ namespace CosmosDbBenchmark
             {
                 blog.RequestCharge += comment.RequestCharge;
             }
-            return blog;
+            return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blog, comments);
+
         }
 
         public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
