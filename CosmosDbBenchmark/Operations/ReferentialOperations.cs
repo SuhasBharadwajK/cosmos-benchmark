@@ -71,34 +71,29 @@ namespace CosmosDbBenchmark
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
             List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-            foreach (var comment in comments)
-            {
-                blog.RequestCharge += comment.RequestCharge;
-            }
 
             return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blog, comments);
         }
 
-        public async Task<CosmosResponse<ReferentialBlog>> CreateBlog(Blog blog)
+        public async Task<Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>> CreateBlog(ReferentialBlog blog)
         {
-            var referentialBlog = (ReferentialBlog)blog;
-            CosmosResponse<ReferentialBlog> result = await referentialBlogRepository.AddAsync(referentialBlog);
+            CosmosResponse<ReferentialBlog> blogResponse = await referentialBlogRepository.AddAsync(blog);
+            List<CosmosResponse<ReferentialComment>> commentRepsonses = new List<CosmosResponse<ReferentialComment>>();
 
             // Add comments from the blog object
-            foreach (var comment in result.Item.BlogComments)
+            foreach (var comment in blogResponse.Item.BlogComments)
             {
-                CosmosResponse<ReferentialComment> response = await referentialCommentRepository.AddAsync(new ReferentialComment
+                commentRepsonses.Add(await referentialCommentRepository.AddAsync(new ReferentialComment
                 {
                     CommentedOn = comment.CommentedOn,
                     AuthorName = comment.AuthorName,
                     CommentText = comment.CommentText,
-                    BlogId = referentialBlog.Id,
+                    BlogId = blog.Id,
                     Id = Guid.NewGuid().ToString(),
-                });
-                result.RequestCharge += response.RequestCharge;
+                }));
             }
 
-            return result;
+            return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blogResponse, commentRepsonses);
         }
 
         public async Task<CosmosResponse<ReferentialBlog>> UpdateBlog(Blog blog)
