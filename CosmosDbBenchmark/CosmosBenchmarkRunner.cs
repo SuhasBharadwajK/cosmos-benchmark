@@ -65,10 +65,12 @@ namespace CosmosDbBenchmark
 
                 if (result.BlogType == BlogType.Embedded)
                 {
+                    newBlog.Type = Constants.EmbeddedBlogTypeKey;
                     benchmarkResult.EmbeddedBlogResponse = await this._embeddedOperations.CreateBlog(newBlog.CastTo<EmbeddedBlog>());
                 }
                 else
                 {
+                    newBlog.Type = Constants.BlogTypeKey;
                     var createBlogResult = await this._referentialOperations.CreateBlog(newBlog.CastTo<ReferentialBlog>());
                     benchmarkResult.ReferentialBlogResponse = createBlogResult.Item1;
                     benchmarkResult.ChildBenchmarkResults = createBlogResult.Item2.Select(c => new BenchmarkResult { ReferentialCommentResponse = c }).ToList();
