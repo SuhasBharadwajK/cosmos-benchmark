@@ -6,6 +6,7 @@ namespace CosmosDbBenchmark.Models
     {
         public BenchmarkResult()
         {
+            ChildBenchmarkResults = new List<BenchmarkResult>();
         }
 
         public List<BenchmarkResult> ChildBenchmarkResults { get; set; }
