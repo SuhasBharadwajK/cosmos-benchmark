@@ -205,7 +205,6 @@ namespace CosmosDbBenchmark
 
                 benchmark.BenchmarkResults.Add(benchmarkResult);
             }
-
             return benchmark;
         }
 
@@ -257,6 +256,13 @@ namespace CosmosDbBenchmark
             benchmark.AddResult(referentialBlogBenchmarkResult);
 
             return benchmark;
+        }
+
+        public async Task DeleteAllItems()
+        {
+            await _embeddedOperations.CreateStoredProcedure();
+            await _embeddedOperations.DropItemsFromContainer();
+            await _referentialOperations.DropItemsFromContainer();
         }
     }
 }

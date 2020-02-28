@@ -113,5 +113,11 @@ namespace CosmosDbBenchmark
         {
             return await referentialCommentRepository.AddOrUpdateAsync(comment, Constants.CommentTypeKey);
         }
+
+        public async Task DropItemsFromContainer()
+        {
+            await referentialBlogRepository.CallStoredProcedure("BulkDelete", "blog", "select * from c");
+            await referentialCommentRepository.CallStoredProcedure("BulkDelete", "comment", "select * from c");
+        }
     }
 }

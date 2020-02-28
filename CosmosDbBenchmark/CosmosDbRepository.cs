@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using CosmosDbBenchmark.Models;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Scripts;
 
 namespace CosmosDbBenchmark
 {
@@ -59,6 +61,30 @@ namespace CosmosDbBenchmark
             }
 
             return responses;
+        }
+
+        public async Task CreateStoredProcedure(string name,string path)
+        {
+            try
+            {
+                StoredProcedureResponse storedProcedureResponse = await this._container.Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties
+                {
+                    Id = name,
+                    Body = File.ReadAllText(path)
+                });
+            }
+            catch(CosmosException ce)
+            {
+
+            }
+        }
+
+        public async Task CallStoredProcedure(string storedProcedureId, string partitionKey,string query)
+        {
+            dynamic[] parameters = new dynamic[]{
+                query
+            };
+            var result = await this._container.Scripts.ExecuteStoredProcedureAsync<object>(storedProcedureId, new PartitionKey(partitionKey), parameters);
         }
     }
 }

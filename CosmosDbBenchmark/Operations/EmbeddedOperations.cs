@@ -71,5 +71,15 @@ namespace CosmosDbBenchmark
             updatedBlog.RequestCharge += blog.RequestCharge;
             return updatedBlog;
         }
+
+        public async Task DropItemsFromContainer()
+        {
+            await blogsRepository.CallStoredProcedure("BulkDelete","embeddedBlog","select * from c");
+        }
+
+        public async Task CreateStoredProcedure()
+        {
+            await blogsRepository.CreateStoredProcedure("BulkDelete", "bulkDelete.js");
+        }
     }
 }
