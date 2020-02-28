@@ -21,12 +21,12 @@ namespace CosmosDbBenchmark
 
         public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogs()
         {
-            return await blogsRepository.QueryItemsAsync("select * from c");
+            return await blogsRepository.QueryItemsAsync("select * from c where c.type = 'embeddedBlog'");
         }
 
         public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithAllComments()
         {
-            return await blogsRepository.QueryItemsAsync("select * from c");
+            return await blogsRepository.QueryItemsAsync("select * from c where c.type = 'embeddedBlog'");
         }
 
         public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithAllComments(string blogId)
@@ -36,7 +36,7 @@ namespace CosmosDbBenchmark
 
         public async Task<List<CosmosResponse<EmbeddedBlog>>> GetAllBlogsWithSomeComments()
         {
-            return await blogsRepository.QueryItemsAsync("select * from c");
+            return await blogsRepository.QueryItemsAsync("select * from c where c.type = 'embeddedBlog'");
         }
 
         public async Task<CosmosResponse<EmbeddedBlog>> GetOneBlogWithSomeComments(string blogId)

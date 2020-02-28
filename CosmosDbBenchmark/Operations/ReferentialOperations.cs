@@ -23,16 +23,17 @@ namespace CosmosDbBenchmark
 
         public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogs()
         {
-            return await referentialBlogRepository.QueryItemsAsync("select * from c");
+            return await referentialBlogRepository.QueryItemsAsync("select * from c where c.type = 'blog'");
         }
 
         public async Task<Tuple<List<CosmosResponse<ReferentialBlog>>, List<CosmosResponse<ReferentialComment>>>> GetAllBlogsWithAllComments()
         {
-            List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
+            List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c where c.type = 'blog'");
             List<CosmosResponse<ReferentialComment>> comments = new List<CosmosResponse<ReferentialComment>>();
             foreach (var blog in blogs)
             {
-                comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                var blogComments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
+                comments.AddRange(blogComments);
                 foreach (var comment in comments)
                 {
                     blog.RequestCharge += comment.RequestCharge;
@@ -55,7 +56,7 @@ namespace CosmosDbBenchmark
 
         public async Task<List<CosmosResponse<ReferentialBlog>>> GetAllBlogsWithSomeComments(int numberOfCommentsRequired)
         {
-            List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c");
+            List<CosmosResponse<ReferentialBlog>> blogs = await referentialBlogRepository.QueryItemsAsync("select * from c where c.type = 'blog'");
             foreach (var blog in blogs)
             {
                 List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
