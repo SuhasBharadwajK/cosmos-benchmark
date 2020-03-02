@@ -10,7 +10,9 @@ namespace CosmosDbBenchmark.Models
 
         public string  Entitytype { get; set; }
 
-        public string TypeOfOperation { get; set; }
+        public string BenchmarkOperation { get; set; }
+
+        public string DbOperation { get; set; }
 
         public string Size { get; set; }
 

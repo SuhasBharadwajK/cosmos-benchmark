@@ -14,6 +14,7 @@ namespace CosmosDbBenchmark
         {
             BenchmarkCsvs = new List<BenchmarkCsv>();
         }
+
         public List<BenchmarkCsv> BenchmarkCsvs { get; set; }
 
         public void WriteRecords(string fileName)
@@ -34,7 +35,7 @@ namespace CosmosDbBenchmark
             }
         }
 
-        public void GenerateBenchmarkCSV(Benchmark benchmark, int blogSize, int commentSize)
+        public void GenerateBenchmarkCSV(Benchmark benchmark)
         {
             List<BenchmarkCsv> benchmarkCsvs = new List<BenchmarkCsv>();
 
@@ -47,8 +48,9 @@ namespace CosmosDbBenchmark
 
                         BlogType = BlogType.Embedded.ToString(),
                         Entitytype = Constants.BlogTypeKey,
-                        TypeOfOperation = result.EmbeddedBlogResponse.ComsosDbOperation.ToString(),
-                        Size = blogSize + " Kb",
+                        BenchmarkOperation = benchmark.BenchmarkType.ToString(),
+                        DbOperation = result.EmbeddedBlogResponse.ComsosDbOperation.ToString(),
+                        Size = result.BlogGenerationResult.BlogSizeInKilobytes + " Kb",
                         ConsumedRU = result.EmbeddedBlogResponse.RequestCharge
                     });
                 }
@@ -59,8 +61,9 @@ namespace CosmosDbBenchmark
 
                         BlogType = BlogType.Referential.ToString(),
                         Entitytype = Constants.BlogTypeKey,
-                        TypeOfOperation = result.ReferentialBlogResponse.ComsosDbOperation.ToString(),
-                        Size = blogSize + " Kb",
+                        BenchmarkOperation = benchmark.BenchmarkType.ToString(),
+                        DbOperation = result.ReferentialBlogResponse.ComsosDbOperation.ToString(),
+                        Size = result.BlogGenerationResult.BlogSizeInKilobytes + " Kb",
                         ConsumedRU = result.ReferentialBlogResponse.RequestCharge
                     });
                     if (result.ChildBenchmarkResults != null && result.ChildBenchmarkResults.Count > 0)
@@ -72,8 +75,9 @@ namespace CosmosDbBenchmark
 
                                 BlogType = BlogType.Referential.ToString(),
                                 Entitytype = Constants.CommentTypeKey,
-                                TypeOfOperation = childResult.ReferentialCommentResponse.ComsosDbOperation.ToString(),
-                                Size = commentSize + " bytes",
+                                BenchmarkOperation = benchmark.BenchmarkType.ToString(),
+                                DbOperation = childResult.ReferentialCommentResponse.ComsosDbOperation.ToString(),
+                                Size = result.BlogGenerationResult.CommentSizeInBytes + " bytes",
                                 ConsumedRU = childResult.ReferentialCommentResponse.RequestCharge
                             });
                         }
@@ -81,6 +85,7 @@ namespace CosmosDbBenchmark
                 }
 
             }
+
             BenchmarkCsvs.AddRange(benchmarkCsvs);
         }
     }
