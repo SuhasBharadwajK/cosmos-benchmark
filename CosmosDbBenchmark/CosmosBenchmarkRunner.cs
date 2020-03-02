@@ -137,7 +137,7 @@ namespace CosmosDbBenchmark
             var embeddedBlog = await this._embeddedOperations.GetBlog(embeddedBlogId);
 
             var embeddedBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.EmbeddedBlogResponse != null && r.EmbeddedBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
-            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
+            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == referenceBlogId).BlogGenerationResult;
 
             benchmark.BenchmarkResults.Add(new BenchmarkResult { EmbeddedBlogResponse = embeddedBlog, BlogGenerationResult = embeddedBlogGenerationResult });
             var comments = _blogGenerator.GenrateBlogComments(commentsCount, embeddedBlog.Item.Comments[0].CommentText.Length);
@@ -257,7 +257,7 @@ namespace CosmosDbBenchmark
             var embeddedBlog = await this._embeddedOperations.GetBlog(embeddedBlogId);
 
             var embeddedBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.EmbeddedBlogResponse != null && r.EmbeddedBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
-            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
+            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == referenceBlogId).BlogGenerationResult;
 
             Console.WriteLine("Getting Embedded Blog with ID: " + embeddedBlogId);
             benchmark.BenchmarkResults.Add(new BenchmarkResult { EmbeddedBlogResponse = embeddedBlog, BlogGenerationResult = embeddedBlogGenerationResult });
@@ -277,7 +277,7 @@ namespace CosmosDbBenchmark
             var benchmark = new Benchmark(BenchmarkType.GetOneBlogWithAllComments);
 
             var embeddedBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.EmbeddedBlogResponse != null && r.EmbeddedBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
-            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
+            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == referenceBlogId).BlogGenerationResult;
 
             var embeddedBlog = await this._embeddedOperations.GetOneBlogWithAllComments(embeddedBlogId);
 
@@ -310,7 +310,7 @@ namespace CosmosDbBenchmark
             var benchmark = new Benchmark(BenchmarkType.GetOneBlogWithSomeComments);
 
             var embeddedBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.EmbeddedBlogResponse != null && r.EmbeddedBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
-            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == embeddedBlogId).BlogGenerationResult;
+            var referentialBlogGenerationResult = previousBenchmarkResults?.FirstOrDefault(r => r.ReferentialBlogResponse != null && r.ReferentialBlogResponse.Item.Id == referenceBlogId).BlogGenerationResult;
 
             var embeddedBlog = await this._embeddedOperations.GetOneBlogWithSomeComments(embeddedBlogId);
 
