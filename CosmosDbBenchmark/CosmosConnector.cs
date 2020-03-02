@@ -6,10 +6,10 @@ namespace CosmosDbBenchmark
     public class CosmosConnector
     {
         /// The Azure Cosmos DB endpoint for running this GetStarted sample.
-        private string EndpointUrl = "https://technovert-test.documents.azure.com:443/";
+        private string EndpointUrl = Environment.GetEnvironmentVariable("EndpointUrl");
 
         /// The primary key for the Azure DocumentDB account.
-        private string PrimaryKey = "HtyzhloYXM0JJVODDbO6K6F8udM7c13Z0JbFGWUpixdk0lnrMQBmevdiG5sqIpNsiT4F8VjGZVcl7ay4fYH41Q==";
+        private string PrimaryKey = Environment.GetEnvironmentVariable("PrimaryKey");
 
         // The Cosmos client instance
         private CosmosClient cosmosClient;
