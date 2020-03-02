@@ -21,7 +21,7 @@ namespace CosmosDbBenchmark
         private Container container;
 
         // The name of the database and container we will create
-        private string databaseId = "FamilyDatabase";
+        private string databaseId = "BenchmarksDB";
         
         private string containerId = "BenchmarksCollection";
 
