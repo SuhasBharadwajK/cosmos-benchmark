@@ -10,7 +10,15 @@ namespace CosmosDbBenchmark
         {
             try
             {
-                CosmosBenchmarkRunner cosmosBenchmarkRunner = CosmosBenchmarkRunner.Initialize(10, 15, 10, 10, 100, 10, 3);
+                var totalBlogs = 10;
+                var commentsPerBlog = 10;
+                var initialBlogSizeInKilobytes = 10;
+                var blogSizeMultiplier = 10;
+                var intialCommentSizeInBytes = 100;
+                var commentSizeMultiplier = 10;
+                var numberOfSizeMultiplications = 3;
+
+                CosmosBenchmarkRunner cosmosBenchmarkRunner = CosmosBenchmarkRunner.Initialize(totalBlogs, commentsPerBlog, initialBlogSizeInKilobytes, blogSizeMultiplier, intialCommentSizeInBytes, commentSizeMultiplier, numberOfSizeMultiplications);
                 Console.WriteLine("Intialized Cosmos Benchmark Runner");
                 cosmosBenchmarkRunner.DeleteAllItems().GetAwaiter().GetResult();
                 CsvGenerator csvGenerator = new CsvGenerator();
@@ -57,7 +65,7 @@ namespace CosmosDbBenchmark
                 var benchmarkUpdatingComments = cosmosBenchmarkRunner.BenchmarkUpdatingComments(referenceId, embeddedId, 5, previousBenchmarkResults).GetAwaiter().GetResult();
                 csvGenerator.GenerateBenchmarkCSV(benchmarkUpdatingComments);
 
-                string fileName = $"D:\\Benchmarks\\Benchmark-{DateTime.Now.ToString("hh-mm-ss-dd-MM-yyyy")}.csv";
+                string fileName = $".\\Benchmark-{DateTime.Now.ToString("hh-mm-ss-dd-MM-yyyy")}.csv";
                 csvGenerator.CreateFileIfNotExists(fileName);
                 csvGenerator.WriteRecords(fileName);
                 Console.WriteLine("Benchmarking has been done successfully");
@@ -70,6 +78,7 @@ namespace CosmosDbBenchmark
             {
                 Console.WriteLine("Running Benchmark has been failed with some exception" + e.Message);
             }
+
             Console.WriteLine("Press any key to continue..");
             Console.ReadKey();
         }
