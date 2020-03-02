@@ -64,12 +64,13 @@ namespace CosmosDbBenchmark
             return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blog, comments);
         }
 
-        public async Task<Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>> CreateBlog(ReferentialBlog blog)
+        public async Task<Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>> CreateBlog(ReferentialBlog blog, int blogNumber)
         {
             CosmosResponse<ReferentialBlog> blogResponse = await referentialBlogRepository.AddAsync(blog);
             List<CosmosResponse<ReferentialComment>> commentRepsonses = new List<CosmosResponse<ReferentialComment>>();
 
             // Add comments from the blog object
+            var count = 1;
             foreach (var comment in blogResponse.Item.BlogComments)
             {
                 commentRepsonses.Add(await referentialCommentRepository.AddAsync(new ReferentialComment
@@ -80,6 +81,9 @@ namespace CosmosDbBenchmark
                     BlogId = blog.Id,
                     Id = Guid.NewGuid().ToString(),
                 }));
+
+                Console.WriteLine("----> Referential Comment No. " + count + " for blog No. " + blogNumber);
+                count++;
             }
 
             return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blogResponse, commentRepsonses);
