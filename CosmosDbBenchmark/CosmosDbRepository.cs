@@ -73,9 +73,8 @@ namespace CosmosDbBenchmark
                     Body = File.ReadAllText(path)
                 });
             }
-            catch(CosmosException ce)
+            catch(CosmosException)
             {
-
             }
         }
 
