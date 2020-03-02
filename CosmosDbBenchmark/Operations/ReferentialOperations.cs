@@ -34,10 +34,6 @@ namespace CosmosDbBenchmark
             {
                 var blogComments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
                 comments.AddRange(blogComments);
-                foreach (var comment in comments)
-                {
-                    blog.RequestCharge += comment.RequestCharge;
-                }
             }
             return new Tuple<List<CosmosResponse<ReferentialBlog>>, List<CosmosResponse<ReferentialComment>>>(blogs,comments);
         }
@@ -46,10 +42,6 @@ namespace CosmosDbBenchmark
         {
             CosmosResponse<ReferentialBlog> blog = await referentialBlogRepository.GetDocumentByIdAsync(blogId, Constants.BlogTypeKey);
             List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-            foreach (var comment in comments)
-            {
-                blog.RequestCharge += comment.RequestCharge;
-            }
             return new Tuple<CosmosResponse<ReferentialBlog>, List<CosmosResponse<ReferentialComment>>>(blog, comments);
 
         }
@@ -60,10 +52,6 @@ namespace CosmosDbBenchmark
             foreach (var blog in blogs)
             {
                 List<CosmosResponse<ReferentialComment>> comments = await referentialCommentRepository.QueryItemsAsync("SELECT TOP " + numberOfCommentsRequired + " * FROM c WHERE c.BlogId = '" + blog.Item.Id + "'");
-                foreach (var comment in comments)
-                {
-                    blog.RequestCharge += comment.RequestCharge;
-                }
             }
             return blogs;
         }
